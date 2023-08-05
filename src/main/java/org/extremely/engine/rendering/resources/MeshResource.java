@@ -1,25 +1,25 @@
 package org.extremely.engine.rendering.resources;
 
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-
 public class MeshResource {
-    private int vbo;
-    private int ibo;
+    private int vaoId;
+//    private int vbo;
+//    private int ibo;
     private int size;
 //    private int refCount;
 
-    public MeshResource(int size) {
-        vbo = glGenBuffers();
-        ibo = glGenBuffers();
+    public MeshResource(int vaoId, int size) {
+        this.vaoId = vaoId;
+
+//        vbo = glGenBuffers();
+//        ibo = glGenBuffers();
 
         this.size = size;
 //        this.refCount = 1;
     }
 
     public void cleanup() {
-        glDeleteBuffers(vbo);
-        glDeleteBuffers(ibo);
+//        glDeleteBuffers(vbo);
+//        glDeleteBuffers(ibo);
     }
 //
 //    public void AddReference() {
@@ -31,15 +31,20 @@ public class MeshResource {
 //        return refCount == 0;
 //    }
 
-    public int GetVbo() {
-        return vbo;
-    }
 
-    public int GetIbo() {
-        return ibo;
+    public int getVaoId() {
+        return vaoId;
     }
+//
+//    public int getVbo() {
+//        return vbo;
+//    }
+//
+//    public int getIbo() {
+//        return ibo;
+//    }
 
-    public int GetSize() {
+    public int getSize() {
         return size;
     }
 }

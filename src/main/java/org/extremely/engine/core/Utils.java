@@ -36,6 +36,14 @@ public class Utils {
         return buffer;
     }
 
+    public static FloatBuffer createFlippedBuffer(float[] values) {
+        FloatBuffer buffer = createFloatBuffer(values.length);
+        buffer.put(values);
+        buffer.flip();
+
+        return buffer;
+    }
+
     public static FloatBuffer createFlippedBuffer(Vertex[] vertices) {
         FloatBuffer buffer = createFloatBuffer(vertices.length * Vertex.SIZE);
 

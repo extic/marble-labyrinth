@@ -16,39 +16,33 @@
 
 package org.extremely.engine.rendering.loading;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class IndexedModel {
-    private final List<Vector3f> positions;
-    private final List<Vector2f> texCoords;
-    private final List<Vector3f> normals;
-    private final List<Integer> indices;
+    private final float[] verticesArray;
+    private final float[] textureArray;
+    private final float[] normalArray;
+    private final int[] indicesArray;
 
-    public IndexedModel() {
-        positions = new ArrayList<>();
-        texCoords = new ArrayList<>();
-        normals = new ArrayList<>();
-        indices = new ArrayList<>();
+
+    public IndexedModel(float[] verticesArray, float[] textureArray, float[] normalArray, int[] indicesArray) {
+        this.verticesArray = verticesArray;
+        this.textureArray = textureArray;
+        this.normalArray = normalArray;
+        this.indicesArray = indicesArray;
     }
 
-
-    public List<Vector3f> getPositions() {
-        return positions;
+    public float[] getVerticesArray() {
+        return verticesArray;
     }
 
-    public List<Vector2f> getTexCoords() {
-        return texCoords;
+    public float[] getTextureArray() {
+        return textureArray;
     }
 
-    public List<Vector3f> getNormals() {
-        return normals;
+    public float[] getNormalArray() {
+        return normalArray;
     }
 
-    public List<Integer> getIndices() {
-        return indices;
+    public int[] getIndicesArray() {
+        return indicesArray;
     }
 }

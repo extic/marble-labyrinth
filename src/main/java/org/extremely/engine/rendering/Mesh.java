@@ -20,12 +20,17 @@ import org.extremely.engine.core.Utils;
 import org.extremely.engine.rendering.loading.IndexedModel;
 import org.extremely.engine.rendering.loading.ObjLoader;
 import org.extremely.engine.rendering.resources.MeshResource;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 public class Mesh {
     private static final Map<String, MeshResource> loadedModels = new HashMap<>();
@@ -56,24 +61,27 @@ public class Mesh {
 //    }
 
     public void draw() {
+        GL30.glBindVertexArray(resource.getVaoId());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 //        glEnableVertexAttribArray(2);
 //        glEnableVertexAttribArray(3);
 //
-        glBindBuffer(GL_ARRAY_BUFFER, resource.GetVbo());
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.SIZE * 4, 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.SIZE * 4, 12);
+//        glBindBuffer(GL_ARRAY_BUFFER, resource.getVbo());
+//        glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.SIZE * 4, 0);
+//        glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.SIZE * 4, 12);
 //        glVertexAttribPointer(2, 3, GL_FLOAT, false, Vertex.SIZE * 4, 20);
 //        glVertexAttribPointer(3, 3, GL_FLOAT, false, Vertex.SIZE * 4, 32);
 //
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.GetIbo());
-        glDrawElements(GL_TRIANGLES, resource.GetSize(), GL_UNSIGNED_INT, 0);
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.getIbo());
+//        glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
 //        glDisableVertexAttribArray(2);
 //        glDisableVertexAttribArray(3);
+        GL30.glBindVertexArray(0);
     }
 
     private MeshResource loadMesh(String fileName) {
@@ -84,35 +92,41 @@ public class Mesh {
         ObjLoader loader = new ObjLoader();
         IndexedModel model = loader.load("./res/models/" + fileName);
 
-        Vertex[] vertexData = convertToVertices(model);
-        int[] indexData = convertToIndexes(model);
-
-        var resource = new MeshResource(indexData.length);
-
-        glBindBuffer(GL_ARRAY_BUFFER, resource.GetVbo());
-        glBufferData(GL_ARRAY_BUFFER, Utils.createFlippedBuffer(vertexData), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.GetIbo());
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, Utils.createFlippedBuffer(indexData), GL_STATIC_DRAW);
-
-        return resource;
+        int vaoId = loadToVao(model);
+        return new MeshResource(vaoId, model.getIndicesArray().length);
     }
 
-    private Vertex[] convertToVertices(IndexedModel model) {
-        Vertex[] vertexData = new Vertex[model.getPositions().size()];
-        for(int i = 0; i < model.getPositions().size(); i++)
-        {
-            vertexData[i] = new Vertex(
-                    model.getPositions().get(i),
-                    model.getTexCoords().get(i),
-                    model.getNormals().get(i));
-        }
-
-
-        return vertexData;
+    private int loadToVao(IndexedModel model) {
+        var vaoId = createVao();
+        bindIndicesBuffer(model.getIndicesArray());
+        storeDataInAttributeList(0, 3, model.getVerticesArray());
+        storeDataInAttributeList(1, 2, model.getTextureArray());
+        storeDataInAttributeList(2, 3, model.getNormalArray());
+        GL30.glBindVertexArray(0);
+        return vaoId;
     }
 
-    private int[] convertToIndexes(IndexedModel model) {
-        return model.getIndices().stream().mapToInt(i -> i).toArray();
+    private int createVao() {
+        var vaoId = GL30.glGenVertexArrays();
+        GL30.glBindVertexArray(vaoId);
+        return vaoId;
+    }
+
+    private void bindIndicesBuffer(int[] indices) {
+        var vboId = GL15.glGenBuffers();
+//        vbos.add(vboId)
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboId);
+        var buffer = Utils.createFlippedBuffer(indices);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+    }
+
+    private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
+        var vboId = GL15.glGenBuffers();
+//        vbos.add(vboId);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+        var buffer = Utils.createFlippedBuffer(data);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 }
