@@ -75,6 +75,7 @@ public class Mesh {
 //
 //        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.getIbo());
 //        glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
+
         glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(0);

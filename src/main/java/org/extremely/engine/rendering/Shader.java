@@ -45,20 +45,25 @@ public class Shader {
         } else {
             resource = new ShaderResource();
 
-            String vertexShaderText = loadShader(fileName + ".vert");
-            String fragmentShaderText = loadShader(fileName + ".frag");
+            var vertexShaderText = loadShader(fileName + ".vert");
+            var fragmentShaderText = loadShader(fileName + ".frag");
 
             addVertexShader(vertexShaderText);
             addFragmentShader(fragmentShaderText);
 
-            AddAllAttributes(vertexShaderText);
+            addAllAttributes(vertexShaderText);
 
             compileShader();
 //
 //            addAllUniforms(vertexShaderText);
 //            addAllUniforms(fragmentShaderText);
 
+
+
             loadedShaders.put(fileName, resource);
+
+            int uniformLocation = glGetUniformLocation(resource.getProgram(), "textureSampler");
+            resource.getUniforms().put("textureSampler", uniformLocation);
         }
     }
 //
@@ -75,6 +80,11 @@ public class Shader {
 
 //    public void UpdateUniforms(Transform transform, Material material, RenderingEngine renderingEngine) {
     public void updateUniforms(Material material, RenderingEngine renderingEngine) {
+        int samplerSlot = renderingEngine.getSamplerSlot("diffuse");
+        material.getTexture("diffuse").bind(samplerSlot);
+        setUniformi("textureSampler", samplerSlot);
+
+
 //        Matrix4f worldMatrix = transform.getTransformation();
 //        Matrix4f MVPMatrix = renderingEngine.getMainCamera().GetViewProjection().Mul(worldMatrix);
 
@@ -123,7 +133,11 @@ public class Shader {
 //        }
     }
 
-    private void AddAllAttributes(String shaderText) {
+    private void addAllAttributes(String shaderText) {
+        setAttribLocation(0, "position");
+        setAttribLocation(1, "textureCoords");
+
+
 //        final String ATTRIBUTE_KEYWORD = "attribute";
 //        int attributeStartLocation = shaderText.indexOf(ATTRIBUTE_KEYWORD);
 //        int attribNumber = 0;
@@ -283,8 +297,8 @@ public class Shader {
         addProgram(text, GL_FRAGMENT_SHADER);
     }
 
-    private void setAttribLocation(String attributeName, int location) {
-        glBindAttribLocation(resource.getProgram(), location, attributeName);
+    private void setAttribLocation(int attributeIndex, String attributeName) {
+        glBindAttribLocation(resource.getProgram(), attributeIndex, attributeName);
     }
 
     private void compileShader() {

@@ -4,15 +4,22 @@ import org.extremely.engine.core.EngineSettings;
 import org.extremely.engine.core.SceneGraph;
 import org.extremely.engine.core.SceneObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderingEngine {
     private Window window;
     private Shader simpleShader;
+    private Map<String, Integer> samplerMap;
 
     public void init(EngineSettings settings) {
         window = new Window();
         window.init(settings);
+
+        samplerMap = new HashMap<>();
+        samplerMap.put("diffuse", 0);
 
         simpleShader = new Shader("shader");
 
@@ -54,6 +61,12 @@ public class RenderingEngine {
     public boolean isCloseRequested() {
         return window.isCloseRequested();
     }
+
+    public int getSamplerSlot(String samplerName)
+    {
+        return samplerMap.get(samplerName);
+    }
+
 
     public void dispose() {
         window.dispose();
