@@ -16,10 +16,12 @@
 
 package org.extremely.marble;
 
-import org.extremely.engine.core.Dimension;
-import org.extremely.engine.core.EngineSettings;
-import org.extremely.engine.core.Game;
+import org.extremely.engine.core.*;
+import org.extremely.engine.core.components.MeshRenderer;
+import org.extremely.engine.rendering.Material;
+import org.extremely.engine.rendering.Mesh;
 import org.extremely.engine.rendering.RenderingEngine;
+import org.extremely.engine.rendering.Texture;
 
 public class MarbleGame implements Game {
 
@@ -30,7 +32,18 @@ public class MarbleGame implements Game {
 
     @Override
     public void init() {
+        var sceneGraph = Engine.getInstance().getSceneGraph();
 
+        Mesh mesh = new Mesh("plane3.obj");
+        Material material = new Material(new Texture("bricks2.jpg"));
+
+        MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
+
+        SceneObject plane = new SceneObject();
+        plane.add(meshRenderer);
+//        plane.GetTransform().GetPos().Set(0, -1, 5);
+
+        sceneGraph.add(plane);
     }
 
     @Override

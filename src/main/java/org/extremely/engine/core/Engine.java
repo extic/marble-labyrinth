@@ -8,6 +8,7 @@ public class Engine {
     private boolean running;
     private Game game;
     private RenderingEngine renderingEngine;
+    private SceneGraph sceneGraph;
 
 
     public static Engine getInstance() {
@@ -20,6 +21,7 @@ public class Engine {
         running = false;
         renderingEngine = new RenderingEngine();
         renderingEngine.init(game.getSettings());
+        sceneGraph = new SceneGraph();
     }
 
     public void start() {
@@ -74,8 +76,7 @@ public class Engine {
             }
 
             if (render) {
-                game.render(renderingEngine);
-                renderingEngine.render();
+                renderingEngine.render(sceneGraph);
                 frames++;
             } else {
                 Utils.delay(1);
@@ -96,5 +97,9 @@ public class Engine {
 
     public RenderingEngine getRenderingEngine() {
         return renderingEngine;
+    }
+
+    public SceneGraph getSceneGraph() {
+        return sceneGraph;
     }
 }
