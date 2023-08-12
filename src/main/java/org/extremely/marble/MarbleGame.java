@@ -26,8 +26,7 @@ import org.extremely.engine.rendering.Material;
 import org.extremely.engine.rendering.Mesh;
 import org.extremely.engine.rendering.RenderingEngine;
 import org.extremely.engine.rendering.Texture;
-import org.joml.Math;
-import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class MarbleGame implements Game {
 
@@ -40,8 +39,8 @@ public class MarbleGame implements Game {
     public void init() {
         var sceneGraph = Engine.getInstance().getSceneGraph();
 
-        Mesh mesh = new Mesh("plane3.obj");
-        Material material = new Material(new Texture("bricks2.jpg"));
+        Mesh mesh = new Mesh("board.obj");
+        Material material = new Material(new Texture("board.png"));
 
         MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
 
@@ -65,9 +64,10 @@ public class MarbleGame implements Game {
     }
 
     private Camera createCamera() {
-        var window = Engine.getInstance().getRenderingEngine().getWindow();
-        var aspectRatio = (float) window.getWidth() / (float)window.getHeight();
-        return new Camera(new Matrix4f().perspective(Math.toRadians(70.0f), aspectRatio, 0.01f, 1000f)
-        );
+        Vector3f position = new Vector3f(0f, 5f, 12f);
+        Vector3f center = new Vector3f(0f, 0f, 0f);
+        Vector3f up = new Vector3f(0f, 1f, 0f);
+
+        return new Camera(70.0f, 0.01f, 1000f, position, center, up);
     }
 }

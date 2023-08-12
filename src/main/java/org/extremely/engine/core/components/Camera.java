@@ -1,6 +1,8 @@
 package org.extremely.engine.core.components;
 
+import org.extremely.engine.core.Engine;
 import org.extremely.engine.core.SceneComponent;
+import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -11,12 +13,14 @@ public class Camera extends SceneComponent
 	private Vector3f center;
 	private Vector3f up;
 
-	public Camera(Matrix4f projection) {
-		this.projectionMatrix = projection;
-
-		position = new Vector3f(0f, 2f, 3f);
-		center = new Vector3f(0f, 0f, 0f);
-		up = new Vector3f(0f, 1f, 0f);
+	public Camera(float fov, float zNear, float zFar, Vector3f position, Vector3f center, Vector3f up) {
+		this.position = position;
+		this.center = center;
+		this.up = up;
+		
+		var window = Engine.getInstance().getRenderingEngine().getWindow();
+		var aspectRatio = (float) window.getWidth() / (float)window.getHeight();
+		projectionMatrix = new Matrix4f().perspective(Math.toRadians(fov), aspectRatio, zNear, zFar);
 	}
 
 	public Matrix4f getViewMatrix() {
