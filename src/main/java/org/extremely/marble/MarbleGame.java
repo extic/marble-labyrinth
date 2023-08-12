@@ -26,13 +26,16 @@ import org.extremely.engine.rendering.Material;
 import org.extremely.engine.rendering.Mesh;
 import org.extremely.engine.rendering.RenderingEngine;
 import org.extremely.engine.rendering.Texture;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class MarbleGame implements Game {
 
+    private SceneObject board;
+
     @Override
     public EngineSettings getSettings() {
-        return new EngineSettings(800, 600, "Labyrinth Marble", 60, true);
+        return new EngineSettings(1600, 900, "Labyrinth Marble", 60, true);
     }
 
     @Override
@@ -41,21 +44,25 @@ public class MarbleGame implements Game {
 
         Mesh mesh = new Mesh("board.obj");
         Material material = new Material(new Texture("board.png"));
-
         MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
+        board = new SceneObject();
+        board.add(meshRenderer);
+        sceneGraph.add(board);
 
-        SceneObject plane = new SceneObject();
-        plane.add(meshRenderer);
-//        plane.GetTransform().GetPos().Set(0, -1, 5);
-
-        sceneGraph.add(plane);
+        mesh = new Mesh("board-perimeter.obj");
+        material = new Material(new Texture("wood1.png"));
+        meshRenderer = new MeshRenderer(mesh, material);
+        SceneObject boardPerimeter = new SceneObject();
+        board.add(meshRenderer);
+        sceneGraph.add(boardPerimeter);
 
         sceneGraph.getRoot().add(createCamera());
     }
 
     @Override
     public void update(float frameTime) {
-
+        var rotate = new Matrix4f().rotate(0.001f, new Vector3f(0, 1, 0));
+        board.getTransform().mul(rotate);
     }
 
     @Override

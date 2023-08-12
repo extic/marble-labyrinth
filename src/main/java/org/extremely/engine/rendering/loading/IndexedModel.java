@@ -1,20 +1,6 @@
-/*
- * Copyright (C) 2014 Benny Bobaganoosh
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.extremely.engine.rendering.loading;
+
+import java.util.List;
 
 public class IndexedModel {
     private final float[] verticesArray;
@@ -23,12 +9,29 @@ public class IndexedModel {
     private final int[] indicesArray;
 
 
-    public IndexedModel(float[] verticesArray, float[] textureArray, float[] normalArray, int[] indicesArray) {
-        this.verticesArray = verticesArray;
-        this.textureArray = textureArray;
-        this.normalArray = normalArray;
-        this.indicesArray = indicesArray;
+    public IndexedModel(List<Float> verticesArray, List<Float> textureArray, List<Float> normalArray, List<Integer> indicesArray) {
+        this.verticesArray = toFloatArray(verticesArray);
+        this.textureArray = toFloatArray(textureArray);
+        this.normalArray = toFloatArray(normalArray);
+        this.indicesArray = toIntArray(indicesArray);
     }
+
+    private float[] toFloatArray(List<Float> list) {
+        var arr = new float[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
+    private int[] toIntArray(List<Integer> list) {
+        var arr = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
 
     public float[] getVerticesArray() {
         return verticesArray;

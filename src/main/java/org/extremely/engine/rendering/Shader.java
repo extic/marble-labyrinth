@@ -90,7 +90,7 @@ public class Shader {
 
         var identity = new Matrix4f().identity();
         var camera = Engine.getInstance().getSceneGraph().getCamera();
-        setUniform("transformationMatrix", identity);
+        setUniform("transformationMatrix", transform);
         setUniform("viewMatrix", camera.getViewMatrix());
         setUniform("projectionMatrix", camera.getProjectionMatrix());
 
