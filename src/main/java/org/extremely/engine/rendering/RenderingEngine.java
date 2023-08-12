@@ -71,4 +71,8 @@ public class RenderingEngine {
     public void dispose() {
         window.dispose();
     }
+
+    public Window getWindow() {
+        return window;
+    }
 }

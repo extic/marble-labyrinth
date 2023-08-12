@@ -8,6 +8,8 @@ import org.lwjgl.system.MemoryUtil;
 
 public class Window {
     private long windowHandle;
+    private int width;
+    private int height;
 
     void init(EngineSettings settings) {
         if (!GLFW.glfwInit()) {
@@ -22,23 +24,23 @@ public class Window {
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);
 
+        this.width = settings.width();
+        this.height = settings.height();
+
         var maximized = false;
-        var dimension = settings.dimension();
-        if (dimension.getWidth() == 0 || dimension.getHeight() == 0) {
+        if (settings.width() == 0 || settings.height() == 0) {
             GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE);
-            dimension.setWidth(100);
-            dimension.setHeight(100);
             maximized = true;
         }
 
-        windowHandle = GLFW.glfwCreateWindow(dimension.getWidth(), dimension.getHeight(), settings.windowTitle(), MemoryUtil.NULL, MemoryUtil.NULL);
+        windowHandle = GLFW.glfwCreateWindow(settings.width(), settings.height(), settings.windowTitle(), MemoryUtil.NULL, MemoryUtil.NULL);
         if (windowHandle == MemoryUtil.NULL) {
             throw new RuntimeException("Failed to create GLFW window");
         }
 
         GLFW.glfwSetFramebufferSizeCallback(windowHandle, (windowHandle, width, height) -> {
-            dimension.setWidth(width);
-            dimension.setHeight(height);
+            this.width = width;
+            this.height = height;
         });
 
 //        GLFW.glfwSetKeyCallback(windowHandle) { window, key, _, action, _ ->
@@ -55,7 +57,7 @@ public class Window {
                 throw new RuntimeException("Cannot get current video mode");
             }
 
-            GLFW.glfwSetWindowPos(windowHandle, (vidMode.width() - dimension.getWidth()) / 2, (vidMode.height() - dimension.getHeight()) / 2);
+            GLFW.glfwSetWindowPos(windowHandle, (vidMode.width() - settings.width()) / 2, (vidMode.height() - settings.height()) / 2);
         }
 
         GLFW.glfwMakeContextCurrent(windowHandle);
@@ -88,5 +90,13 @@ public class Window {
 
     public void dispose() {
         GLFW.glfwDestroyWindow(windowHandle);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

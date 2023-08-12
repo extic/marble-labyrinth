@@ -1,7 +1,8 @@
 package org.extremely.engine.core;
 
 public record EngineSettings(
-    Dimension dimension,
+    int width,
+    int height,
     String windowTitle,
     int frameRate,
     boolean vSync

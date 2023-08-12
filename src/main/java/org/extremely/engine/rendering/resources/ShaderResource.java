@@ -72,4 +72,8 @@ public class ShaderResource {
     public List<String> getUniformTypes() {
         return uniformTypes;
     }
+
+    public void addUniform(String uniformName, int uniformLocation) {
+        uniforms.put(uniformName, uniformLocation);
+    }
 }

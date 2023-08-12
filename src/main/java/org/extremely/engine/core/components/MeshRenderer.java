@@ -18,8 +18,8 @@ public class MeshRenderer extends SceneComponent {
     @Override
     public void render(Shader shader, RenderingEngine renderingEngine) {
         shader.bind();
-//        shader.UpdateUniforms(GetTransform(), material, renderingEngine);
-        shader.updateUniforms(material, renderingEngine);
+        shader.updateUniforms(getTransform(), material, renderingEngine);
+//        shader.updateUniforms(material, renderingEngine);
         mesh.draw();
     }
 }

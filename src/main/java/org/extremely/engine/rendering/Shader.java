@@ -16,9 +16,11 @@
 
 package org.extremely.engine.rendering;
 
+import org.extremely.engine.core.Engine;
 import org.extremely.engine.rendering.resources.ShaderResource;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -62,8 +64,10 @@ public class Shader {
 
             loadedShaders.put(fileName, resource);
 
-            int uniformLocation = glGetUniformLocation(resource.getProgram(), "textureSampler");
-            resource.getUniforms().put("textureSampler", uniformLocation);
+            addUniform("textureSampler", "sampler2D");
+            addUniform("transformationMatrix", "mat4");
+            addUniform("viewMatrix", "mat4");
+            addUniform("projectionMatrix", "mat4");
         }
     }
 //
@@ -79,10 +83,16 @@ public class Shader {
     }
 
 //    public void UpdateUniforms(Transform transform, Material material, RenderingEngine renderingEngine) {
-    public void updateUniforms(Material material, RenderingEngine renderingEngine) {
+    public void updateUniforms(Matrix4f transform, Material material, RenderingEngine renderingEngine) {
         int samplerSlot = renderingEngine.getSamplerSlot("diffuse");
         material.getTexture("diffuse").bind(samplerSlot);
-        setUniformi("textureSampler", samplerSlot);
+        setUniform("textureSampler", samplerSlot);
+
+        var identity = new Matrix4f().identity();
+        var camera = Engine.getInstance().getSceneGraph().getCamera();
+        setUniform("transformationMatrix", identity);
+        setUniform("viewMatrix", camera.getViewMatrix());
+        setUniform("projectionMatrix", camera.getProjectionMatrix());
 
 
 //        Matrix4f worldMatrix = transform.getTransformation();
@@ -260,6 +270,7 @@ public class Shader {
 //        }
 //    }
 //
+    private void addUniform(String uniformName, String uniformType) {
 //    private void AddUniform(String uniformName, String uniformType, HashMap<String, ArrayList<GLSLStruct>> structs) {
 //        boolean addThis = true;
 //        ArrayList<GLSLStruct> structComponents = structs.get(uniformType);
@@ -274,16 +285,13 @@ public class Shader {
 //        if (!addThis)
 //            return;
 //
-//        int uniformLocation = glGetUniformLocation(resource.GetProgram(), uniformName);
-//
-//        if (uniformLocation == 0xFFFFFFFF) {
-//            System.err.println("Error: Could not find uniform: " + uniformName);
-//            new Exception().printStackTrace();
-//            System.exit(1);
-//        }
-//
-//        resource.GetUniforms().put(uniformName, uniformLocation);
-//    }
+        int uniformLocation = glGetUniformLocation(resource.getProgram(), uniformName);
+        if (uniformLocation == 0xFFFFFFFF) {
+            throw new RuntimeException("Error: Could not find uniform: " + uniformName);
+        }
+
+        resource.addUniform(uniformName, uniformLocation);
+    }
 
     private void addVertexShader(String text) {
         addProgram(text, GL_VERTEX_SHADER);
@@ -357,11 +365,11 @@ public class Shader {
         return shaderSource.toString();
     }
 
-    public void setUniformi(String uniformName, int value) {
+    public void setUniform(String uniformName, int value) {
         glUniform1i(resource.getUniforms().get(uniformName), value);
     }
 
-    public void setUniformf(String uniformName, float value) {
+    public void setUniform(String uniformName, float value) {
         glUniform1f(resource.getUniforms().get(uniformName), value);
     }
 
@@ -369,8 +377,10 @@ public class Shader {
         glUniform3f(resource.getUniforms().get(uniformName), value.x, value.y, value.z);
     }
 
-    public void SetUniform(String uniformName, Matrix4f value) {
-//        glUniformMatrix4(resource.getUniforms().get(uniformName), true, Util.CreateFlippedBuffer(value));
+    public void setUniform(String uniformName, Matrix4f value) {
+        try (var it = MemoryStack.stackPush()) {
+            glUniformMatrix4fv(resource.getUniforms().get(uniformName), false, value.get(it.mallocFloat(16)));
+        }
     }
 //
 //    public void SetUniformBaseLight(String uniformName, BaseLight baseLight) {

@@ -16,18 +16,24 @@
 
 package org.extremely.marble;
 
-import org.extremely.engine.core.*;
+import org.extremely.engine.core.Engine;
+import org.extremely.engine.core.EngineSettings;
+import org.extremely.engine.core.Game;
+import org.extremely.engine.core.SceneObject;
+import org.extremely.engine.core.components.Camera;
 import org.extremely.engine.core.components.MeshRenderer;
 import org.extremely.engine.rendering.Material;
 import org.extremely.engine.rendering.Mesh;
 import org.extremely.engine.rendering.RenderingEngine;
 import org.extremely.engine.rendering.Texture;
+import org.joml.Math;
+import org.joml.Matrix4f;
 
 public class MarbleGame implements Game {
 
     @Override
     public EngineSettings getSettings() {
-        return new EngineSettings(new Dimension(800, 600), "Labyrinth Marble", 60, true);
+        return new EngineSettings(800, 600, "Labyrinth Marble", 60, true);
     }
 
     @Override
@@ -44,6 +50,8 @@ public class MarbleGame implements Game {
 //        plane.GetTransform().GetPos().Set(0, -1, 5);
 
         sceneGraph.add(plane);
+
+        sceneGraph.getRoot().add(createCamera());
     }
 
     @Override
@@ -54,5 +62,12 @@ public class MarbleGame implements Game {
     @Override
     public void render(RenderingEngine renderingEngine) {
 
+    }
+
+    private Camera createCamera() {
+        var window = Engine.getInstance().getRenderingEngine().getWindow();
+        var aspectRatio = (float) window.getWidth() / (float)window.getHeight();
+        return new Camera(new Matrix4f().perspective(Math.toRadians(70.0f), aspectRatio, 0.01f, 1000f)
+        );
     }
 }
