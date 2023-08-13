@@ -26,12 +26,13 @@ import org.extremely.engine.rendering.Material;
 import org.extremely.engine.rendering.Mesh;
 import org.extremely.engine.rendering.RenderingEngine;
 import org.extremely.engine.rendering.Texture;
-import org.joml.Matrix4f;
+import org.joml.Math;
 import org.joml.Vector3f;
 
 public class MarbleGame implements Game {
-
+    private InputServer inputServer;
     private SceneObject board;
+    private float counter;
 
     @Override
     public EngineSettings getSettings() {
@@ -57,12 +58,20 @@ public class MarbleGame implements Game {
         sceneGraph.add(boardPerimeter);
 
         sceneGraph.getRoot().add(createCamera());
+
+        inputServer = new InputServer();
+        inputServer.run(vector -> {
+            board.getTransform().identity().rotateXYZ(Math.toRadians(-vector.y), 0, Math.toRadians(-vector.x));
+        });
     }
 
     @Override
     public void update(float frameTime) {
-        var rotate = new Matrix4f().rotate(0.001f, new Vector3f(0, 1, 0));
-        board.getTransform().mul(rotate);
+//        counter += 0.2f;
+//        var rotate = new Matrix4f().rotate(0.001f, new Vector3f(0, 1, 0));
+//        var rotate1 = new Matrix4f().rotate((float)(Math.sin(counter)) / 20f, new Vector3f(0, 0, 1));
+//        var rotate2 = new Matrix4f().rotate((float)(Math.sin(counter / 1.5f)) / 20f, new Vector3f(1, 0, 0));
+//        board.getTransform().mul(rotate).mul(rotate1).mul(rotate2);
     }
 
     @Override
