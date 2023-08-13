@@ -94,15 +94,15 @@ public class Mesh {
         IndexedModel model = loader.load("./res/models/" + fileName);
 
         int vaoId = loadToVao(model);
-        return new MeshResource(vaoId, model.getIndicesArray().length);
+        return new MeshResource(vaoId, model.indicesArray().length);
     }
 
     private int loadToVao(IndexedModel model) {
         var vaoId = createVao();
-        bindIndicesBuffer(model.getIndicesArray());
-        storeDataInAttributeList(0, 3, model.getVerticesArray());
-        storeDataInAttributeList(1, 2, model.getTextureArray());
-        storeDataInAttributeList(2, 3, model.getNormalArray());
+        bindIndicesBuffer(model.indicesArray());
+        storeDataInAttributeList(0, 3, model.verticesArray());
+        storeDataInAttributeList(1, 2, model.textureArray());
+        storeDataInAttributeList(2, 3, model.normalArray());
         GL30.glBindVertexArray(0);
         return vaoId;
     }

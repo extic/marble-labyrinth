@@ -66,7 +66,11 @@ public class ObjLoader {
             processVertexData(vertexDataList.get(2), vertexDataMap, indexArray, vertices, textures, normals, vertexArray, textureArray, normalArray);
         });
 
-        return new IndexedModel(vertexArray, textureArray, normalArray, indexArray);
+        return new IndexedModel(
+                toFloatArray(vertexArray),
+                toFloatArray(textureArray),
+                toFloatArray(normalArray),
+                toIntArray(indexArray));
     }
 
     private void processVertexData(VertexData vertexData,
@@ -99,6 +103,22 @@ public class ObjLoader {
         }
 
         indices.add(index);
+    }
+
+    private float[] toFloatArray(List<Float> list) {
+        var arr = new float[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
+    private int[] toIntArray(List<Integer> list) {
+        var arr = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
     }
 
     record VertexData(Integer vertex, Integer texture, Integer normal) {}
