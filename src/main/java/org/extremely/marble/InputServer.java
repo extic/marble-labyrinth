@@ -84,22 +84,11 @@ public class InputServer {
                     reduced.div(VECTOR_ARRAY_SIZE);
                     reduced.normalize();
 
-//                    consumer.accept(reduced);
-
                     var roll = Math.atan2(reduced.y, reduced.z) * 57.3f;
                     var pitch = Math.atan2((-reduced.x) , Math.sqrt(reduced.y * reduced.y + reduced.z * reduced.z)) * 57.3f;
                     var yaw = 0f;
 
                     consumer.accept(new Vector3f(roll, pitch, yaw));
-
-
-                    //                val gameLogic = engine.logic as GameLogic
-                    ////                gameLogic.entity.rotation.x = rotatedVector.x
-                    ////                gameLogic.entity.rotation.y = rotatedVector.y
-                    ////                gameLogic.entity.rotation.z = rotatedVector.z
-                    //                gameLogic.entity.rotation.x = Math.toRadians(-pitch)
-                    //                gameLogic.entity.rotation.y = Math.toRadians(roll)
-                    //                gameLogic.entity.rotation.z = Math.toRadians(yaw)
                 }
             } catch (Exception e) {
                 shutdown();
