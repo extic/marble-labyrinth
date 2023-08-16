@@ -28,7 +28,6 @@ import org.joml.Vector3f;
 
 public class MarbleGame implements Game {
     private InputServer inputServer;
-    private SceneObject board;
     private float counter;
 
     @Override
@@ -40,10 +39,10 @@ public class MarbleGame implements Game {
     public void init() {
         var sceneGraph = Engine.getInstance().getSceneGraph();
 
-        board = createBoard();
+        var board = createBoard();
         sceneGraph.add(board);
 
-        var ball = createBall();
+        var ball = createBall(board);
         board.add(ball);
 
         var light = new Light(new Vector3f(0, 20, 20), new Vector3f(1, 1, 1));
@@ -105,7 +104,7 @@ public class MarbleGame implements Game {
         return board;
     }
 
-    private SceneObject createBall() {
+    private SceneObject createBall(SceneObject board) {
         var mesh = new Mesh("ball.obj");
         var material = new Material(new Texture("wood1.png"));
         var meshRenderer = new MeshRenderer(mesh, material);
@@ -113,7 +112,7 @@ public class MarbleGame implements Game {
         ball.add(meshRenderer);
         ball.getTransform().getLocalMatrix().translate(new Vector3f(0, 0.125f, 0));
         ball.getTransform().setChanged(true);
-        ball.add(new BallMovement());
+        ball.add(new BallMovement(board));
         return ball;
     }
 }
