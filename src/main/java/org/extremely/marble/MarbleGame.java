@@ -40,41 +40,32 @@ public class MarbleGame implements Game {
     public void init() {
         var sceneGraph = Engine.getInstance().getSceneGraph();
 
-        Mesh mesh = new Mesh("board.obj");
-        Material material = new Material(new Texture("board.png"));
-        MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
-        board = new SceneObject();
-        board.add(meshRenderer);
+        board = createBoard();
         sceneGraph.add(board);
 
-        mesh = new Mesh("board-perimeter.obj");
-        material = new Material(new Texture("wood1.png"));
-        meshRenderer = new MeshRenderer(mesh, material);
-        SceneObject boardPerimeter = new SceneObject();
-        board.add(meshRenderer);
-        sceneGraph.add(boardPerimeter);
-
-        sceneGraph.getRoot().add(createCamera());
+        var ball = createBall();
+        board.add(ball);
 
         var light = new Light(new Vector3f(0, 20, 20), new Vector3f(1, 1, 1));
         sceneGraph.setLight(light);
+        sceneGraph.getRoot().add(createCamera());
 
-
-        mesh = new Mesh("ball.obj");
-        material = new Material(new Texture("wood1.png"));
-        meshRenderer = new MeshRenderer(mesh, material);
-        SceneObject ball = new SceneObject();
-        ball.add(meshRenderer);
-        board.add(ball);
-
+        var boardInputComponent = new BoardMovement();
+        board.add(boardInputComponent);
         inputServer = new InputServer();
         inputServer.run(vector -> {
-            board.getTransform().identity().rotateXYZ(Math.toRadians(-vector.y), 0, Math.toRadians(-vector.x));
+            boardInputComponent.setInput(new Vector3f(Math.toRadians(-vector.y), 0, Math.toRadians(-vector.x)));
         });
     }
 
     @Override
+    public void input() {
+        Engine.getInstance().getSceneGraph().getRoot().input();
+    }
+
+    @Override
     public void update(float frameTime) {
+        Engine.getInstance().getSceneGraph().getRoot().update(frameTime);
 //        counter += 0.2f;
 //        var rotate = new Matrix4f().rotate(0.001f, new Vector3f(0, 1, 0));
 //        var rotate1 = new Matrix4f().rotate((float)(Math.sin(counter)) / 20f, new Vector3f(0, 0, 1));
@@ -93,5 +84,36 @@ public class MarbleGame implements Game {
         Vector3f up = new Vector3f(0f, 1f, 0f);
 
         return new Camera(70.0f, 0.01f, 1000f, position, center, up);
+    }
+
+    private SceneObject createBoard() {
+        Mesh mesh = new Mesh("board.obj");
+        Material material = new Material(new Texture("board.png"));
+        MeshRenderer meshRenderer = new MeshRenderer(mesh, material);
+        SceneObject boardPlane = new SceneObject("board plane");
+        boardPlane.add(meshRenderer);
+
+        mesh = new Mesh("board-perimeter.obj");
+        material = new Material(new Texture("wood1.png"));
+        meshRenderer = new MeshRenderer(mesh, material);
+        SceneObject boardPerimeter = new SceneObject("board perimeter");
+        boardPerimeter.add(meshRenderer);
+
+        var board = new SceneObject("board");
+        board.add(boardPlane);
+        board.add(boardPerimeter);
+        return board;
+    }
+
+    private SceneObject createBall() {
+        var mesh = new Mesh("ball.obj");
+        var material = new Material(new Texture("wood1.png"));
+        var meshRenderer = new MeshRenderer(mesh, material);
+        SceneObject ball = new SceneObject("ball");
+        ball.add(meshRenderer);
+        ball.getTransform().getLocalMatrix().translate(new Vector3f(0, 0.125f, 0));
+        ball.getTransform().setChanged(true);
+        ball.add(new BallMovement());
+        return ball;
     }
 }

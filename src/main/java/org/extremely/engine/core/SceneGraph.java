@@ -8,7 +8,7 @@ public class SceneGraph {
     private Light light;
 
     public SceneGraph() {
-        root = new SceneObject();
+        root = new SceneObject("root");
     }
 
     public void add(SceneObject object) {

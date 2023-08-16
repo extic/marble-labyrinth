@@ -23,6 +23,8 @@ public interface Game {
 
     void init();
 
+    void input();
+
     void update(float frameTime);
 
     void render(RenderingEngine renderingEngine);

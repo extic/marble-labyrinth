@@ -58,6 +58,8 @@ public class Engine {
             unprocessedTime += passedTime;
             frameCounter += passedTime;
 
+            game.input();
+
             while (unprocessedTime > frameTime) {
                 render = true;
 
@@ -65,6 +67,7 @@ public class Engine {
 
 //                game.input(frameTime);
 //                input.update();
+
 
                 game.update(frameTime);
 

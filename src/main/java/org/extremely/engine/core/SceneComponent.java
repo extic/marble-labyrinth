@@ -2,7 +2,6 @@ package org.extremely.engine.core;
 
 import org.extremely.engine.rendering.RenderingEngine;
 import org.extremely.engine.rendering.Shader;
-import org.joml.Matrix4f;
 
 public class SceneComponent {
     private SceneObject parent;
@@ -11,9 +10,15 @@ public class SceneComponent {
         this.parent = parent;
     }
 
+    public void input() {
+    }
+
+    public void update(float frameTime) {
+    }
+
     public void render(Shader shader, RenderingEngine renderingEngine) {}
 
-    public Matrix4f getTransform() {
+    public SceneObjectTransform getTransform() {
         return parent.getTransform();
     }
 }

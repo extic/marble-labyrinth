@@ -7,8 +7,8 @@ import org.extremely.engine.rendering.RenderingEngine;
 import org.extremely.engine.rendering.Shader;
 
 public class MeshRenderer extends SceneComponent {
-    private Mesh mesh;
-    private Material material;
+    private final Mesh mesh;
+    private final Material material;
 
     public MeshRenderer(Mesh mesh, Material material) {
         this.mesh = mesh;
@@ -18,7 +18,7 @@ public class MeshRenderer extends SceneComponent {
     @Override
     public void render(Shader shader, RenderingEngine renderingEngine) {
         shader.bind();
-        shader.updateUniforms(getTransform(), material, renderingEngine);
+        shader.updateUniforms(getTransform().getWorldMatrix(), material, renderingEngine);
 //        shader.updateUniforms(material, renderingEngine);
         mesh.draw();
     }
