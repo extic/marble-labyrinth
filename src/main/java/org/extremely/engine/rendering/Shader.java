@@ -17,6 +17,7 @@
 package org.extremely.engine.rendering;
 
 import org.extremely.engine.core.Engine;
+import org.extremely.engine.core.SceneGraph;
 import org.extremely.engine.rendering.resources.ShaderResource;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -68,6 +69,8 @@ public class Shader {
             addUniform("transformationMatrix", "mat4");
             addUniform("viewMatrix", "mat4");
             addUniform("projectionMatrix", "mat4");
+            addUniform("lightPosition", "vec3");
+            addUniform("lightColor", "vec3");
         }
     }
 //
@@ -89,10 +92,16 @@ public class Shader {
         setUniform("textureSampler", samplerSlot);
 
         var identity = new Matrix4f().identity();
-        var camera = Engine.getInstance().getSceneGraph().getCamera();
+        SceneGraph sceneGraph = Engine.getInstance().getSceneGraph();
+
+        var camera = sceneGraph.getCamera();
         setUniform("transformationMatrix", transform);
         setUniform("viewMatrix", camera.getViewMatrix());
         setUniform("projectionMatrix", camera.getProjectionMatrix());
+
+        var light = sceneGraph.getLight();
+        setUniform("lightPosition", light.getPosition());
+        setUniform("lightColor", light.getColor());
 
 
 //        Matrix4f worldMatrix = transform.getTransformation();
@@ -146,6 +155,7 @@ public class Shader {
     private void addAllAttributes(String shaderText) {
         setAttribLocation(0, "position");
         setAttribLocation(1, "textureCoords");
+        setAttribLocation(2, "normal");
 
 
 //        final String ATTRIBUTE_KEYWORD = "attribute";

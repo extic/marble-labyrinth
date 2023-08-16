@@ -5,6 +5,7 @@ import org.extremely.engine.core.components.Camera;
 public class SceneGraph {
     private SceneObject root;
     private Camera camera;
+    private Light light;
 
     public SceneGraph() {
         root = new SceneObject();
@@ -24,5 +25,13 @@ public class SceneGraph {
 
     public void setCamera(Camera camera) {
         this.camera = camera;
+    }
+
+    public Light getLight() {
+        return light;
+    }
+
+    public void setLight(Light light) {
+        this.light = light;
     }
 }

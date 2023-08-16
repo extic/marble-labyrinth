@@ -16,10 +16,7 @@
 
 package org.extremely.marble;
 
-import org.extremely.engine.core.Engine;
-import org.extremely.engine.core.EngineSettings;
-import org.extremely.engine.core.Game;
-import org.extremely.engine.core.SceneObject;
+import org.extremely.engine.core.*;
 import org.extremely.engine.core.components.Camera;
 import org.extremely.engine.core.components.MeshRenderer;
 import org.extremely.engine.rendering.Material;
@@ -59,6 +56,17 @@ public class MarbleGame implements Game {
 
         sceneGraph.getRoot().add(createCamera());
 
+        var light = new Light(new Vector3f(0, 20, 20), new Vector3f(1, 1, 1));
+        sceneGraph.setLight(light);
+
+
+        mesh = new Mesh("ball.obj");
+        material = new Material(new Texture("wood1.png"));
+        meshRenderer = new MeshRenderer(mesh, material);
+        SceneObject ball = new SceneObject();
+        ball.add(meshRenderer);
+        board.add(ball);
+
         inputServer = new InputServer();
         inputServer.run(vector -> {
             board.getTransform().identity().rotateXYZ(Math.toRadians(-vector.y), 0, Math.toRadians(-vector.x));
@@ -80,7 +88,7 @@ public class MarbleGame implements Game {
     }
 
     private Camera createCamera() {
-        Vector3f position = new Vector3f(0f, 5f, 12f);
+        Vector3f position = new Vector3f(0f, 5f, 8f);
         Vector3f center = new Vector3f(0f, 0f, 0f);
         Vector3f up = new Vector3f(0f, 1f, 0f);
 

@@ -64,7 +64,7 @@ public class Mesh {
         GL30.glBindVertexArray(resource.getVaoId());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-//        glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(2);
 //        glEnableVertexAttribArray(3);
 //
 //        glBindBuffer(GL_ARRAY_BUFFER, resource.getVbo());
@@ -80,7 +80,7 @@ public class Mesh {
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
-//        glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(2);
 //        glDisableVertexAttribArray(3);
         GL30.glBindVertexArray(0);
     }
