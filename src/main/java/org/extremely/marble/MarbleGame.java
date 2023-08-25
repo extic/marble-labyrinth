@@ -26,6 +26,11 @@ import org.extremely.engine.rendering.Texture;
 import org.joml.Math;
 import org.joml.Vector3f;
 
+import java.io.File;
+import java.util.Arrays;
+
+import static java.util.Objects.requireNonNull;
+
 public class MarbleGame implements Game {
     private InputServer inputServer;
     private float counter;
@@ -42,10 +47,12 @@ public class MarbleGame implements Game {
         var board = createBoard();
         sceneGraph.add(board);
 
+        loadWalls(board);
+
         var ball = createBall(board);
         board.add(ball);
 
-        var light = new Light(new Vector3f(0, 20, 20), new Vector3f(1, 1, 1));
+        var light = new Light(new Vector3f(10, 20, 20), new Vector3f(1, 1, 1));
         sceneGraph.setLight(light);
         sceneGraph.getRoot().add(createCamera());
 
@@ -93,7 +100,7 @@ public class MarbleGame implements Game {
         boardPlane.add(meshRenderer);
 
         mesh = new Mesh("board-perimeter.obj");
-        material = new Material(new Texture("wood1.png"));
+        material = new Material(new Texture("wood2.jpg"));
         meshRenderer = new MeshRenderer(mesh, material);
         SceneObject boardPerimeter = new SceneObject("board perimeter");
         boardPerimeter.add(meshRenderer);
@@ -106,7 +113,7 @@ public class MarbleGame implements Game {
 
     private SceneObject createBall(SceneObject board) {
         var mesh = new Mesh("ball.obj");
-        var material = new Material(new Texture("wood1.png"));
+        var material = new Material(new Texture("wood2.jpg"));
         var meshRenderer = new MeshRenderer(mesh, material);
         SceneObject ball = new SceneObject("ball");
         ball.add(meshRenderer);
@@ -114,5 +121,18 @@ public class MarbleGame implements Game {
         ball.getTransform().setChanged(true);
         ball.add(new BallMovement(board));
         return ball;
+    }
+
+    private void loadWalls(SceneObject board) {
+        var modelsFolder = new File("./res/models");
+        Arrays.stream(requireNonNull(modelsFolder.list((dir, name) -> name.matches("wall\\d.obj"))))
+                .forEach(fileName -> {
+                    var mesh = new Mesh(fileName);
+                    var material = new Material(new Texture("wood2.jpg"));
+                    var meshRenderer = new MeshRenderer(mesh, material);
+                    SceneObject wall = new SceneObject(fileName);
+                    wall.add(meshRenderer);
+                    board.add(wall);
+                });
     }
 }
