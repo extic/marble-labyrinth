@@ -15,7 +15,7 @@ void main(void) {
 
     float nDotl = dot(unitNormal, unitLightVector);
     float brightness = max(nDotl, 0.0);
-    vec3 diffuse = brightness * lightColor;
+    vec3 diffuse = brightness * lightColor * vec3(0.8, 0.8, 0.8) + vec3(0.2, 0.2, 0.2);
 
     out_Color = vec4(diffuse, 0.0) * texture(textureSampler, pass_textureCoords);
 }
