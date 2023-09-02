@@ -85,7 +85,7 @@ public class MarbleGame implements Game {
     }
 
     private Camera createCamera() {
-        Vector3f position = new Vector3f(0f, 5f, 8f);
+        Vector3f position = new Vector3f(0f, 10f, 4f);
         Vector3f center = new Vector3f(0f, 0f, 0f);
         Vector3f up = new Vector3f(0f, 1f, 0f);
 
@@ -125,7 +125,7 @@ public class MarbleGame implements Game {
 
     private void loadWalls(SceneObject board) {
         var modelsFolder = new File("./res/models");
-        Arrays.stream(requireNonNull(modelsFolder.list((dir, name) -> name.matches("wall\\d.obj"))))
+        Arrays.stream(requireNonNull(modelsFolder.list((dir, name) -> name.matches("wall\\d+[.]obj"))))
                 .forEach(fileName -> {
                     var mesh = new Mesh(fileName);
                     var material = new Material(new Texture("wood2.jpg"));

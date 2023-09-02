@@ -22,7 +22,7 @@ public class BallMovement extends SceneComponent {
 
     @Override
     public void update(float frameTime) {
-        if(1==1) return;
+//        if(1==1) return;
         var boardMatrix = board.getTransform().getLocalMatrix();
         var boardNormal = new Vector4f(0, 1, 0, 0).mul(boardMatrix);
         var upVector = new Vector3f(0, 1, 0);
@@ -30,7 +30,7 @@ public class BallMovement extends SceneComponent {
         if (boardTangent.length() > 0.001) {
             var gradient = boardTangent.cross(boardNormal.x, boardNormal.y, boardNormal.z).normalize();
 
-            acceleration.zero().add(gradient.mul(-gradient.y).mul(0.01f));
+            acceleration.zero().add(gradient.mul(-gradient.y).mul(0.02f));
             acceleration.y = 0;
         }
 
@@ -45,7 +45,7 @@ public class BallMovement extends SceneComponent {
 
         boolean detected = wallCollisionDetector.detect(beforeTranslation, afterTranslation, velocity, 0.25f);
         if (detected) {
-            System.out.println("hit");
+//            System.out.println("hit");
 //                beforeTranslation.add(velocity, afterTranslation);
         }
 

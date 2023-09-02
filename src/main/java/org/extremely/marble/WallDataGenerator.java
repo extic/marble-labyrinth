@@ -8,8 +8,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -18,9 +18,16 @@ import static java.util.Objects.requireNonNull;
 public class WallDataGenerator {
     private void run() {
         var modelsFolder = new File("./res/models");
-        var walls = Arrays.stream(requireNonNull(modelsFolder.list((dir, name) -> name.matches("wall\\d.obj"))))
+        var innerWalls = Arrays.stream(requireNonNull(modelsFolder.list((dir, name) -> name.matches("wall\\d+[.]obj"))))
                 .flatMap(fileName -> loadWalls("./res/models/" + fileName).stream())
                 .toList();
+
+        var walls = new ArrayList<WallData>();
+        walls.add(new WallData(new Vector3f(-5.12f, 0, -5.12f), new Vector3f(5.12f, 0, -5.12f), WallDirection.SOUTH));
+        walls.add(new WallData(new Vector3f(5.12f, 0, -5.12f), new Vector3f(5.12f, 0, 5.12f), WallDirection.WEST));
+        walls.add(new WallData(new Vector3f(-5.12f, 0, 5.12f), new Vector3f(5.12f, 0, 5.12f), WallDirection.NORTH));
+        walls.add(new WallData(new Vector3f(-5.12f, 0, -5.12f), new Vector3f(-5.12f, 0, 5.12f), WallDirection.EAST));
+        walls.addAll(innerWalls);
 
         var gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         var json = gson.toJson(walls);
@@ -33,11 +40,7 @@ public class WallDataGenerator {
     }
 
     private List<WallData> loadWalls(String fileName) {
-        if (!fileName.contains("wall1")) {
-            return Collections.emptyList();
-        }
         var loader = new ObjLoader();
-//        var meshData = loader.load("./res/models/wall1.obj");
         var meshData = loader.load(fileName);
 
         var triangleVertexIndices = partition(Arrays.stream(meshData.indicesArray()).boxed().toList(), 3);
@@ -56,6 +59,8 @@ public class WallDataGenerator {
                 .filter(triangle -> triangle.vertices().size() == 2)
                 .map(triangle -> {
                     WallDirection direction = null;
+                    var vertex1 = triangle.vertices.get(0);
+                    var vertex2 = triangle.vertices.get(1);
                     if (triangle.normal.x == 1f) {
                         direction = WallDirection.EAST;
                     } else if (triangle.normal.x == -1f) {
@@ -67,7 +72,24 @@ public class WallDataGenerator {
                     } else {
                         throw new RuntimeException("Could not determine wall direction - " + triangle.normal);
                     }
-                    return new WallData(triangle.vertices.get(0), triangle.vertices.get(1), direction);
+
+                    if (direction == WallDirection.EAST || direction == WallDirection.WEST) {
+                        if (vertex1.z > vertex2.z) {
+                            var tmp = vertex1;
+                            vertex1 = vertex2;
+                            vertex2 = tmp;
+                        }
+                    }
+
+                    if (direction == WallDirection.NORTH || direction == WallDirection.SOUTH) {
+                        if (vertex1.x > vertex2.x) {
+                            var tmp = vertex1;
+                            vertex1 = vertex2;
+                            vertex2 = tmp;
+                        }
+                    }
+
+                    return new WallData(vertex1, vertex2, direction);
                 })
                 .toList();
     }
