@@ -113,7 +113,7 @@ public class MarbleGame implements Game {
 
     private SceneObject createBall(SceneObject board) {
         var mesh = new Mesh("ball.obj");
-        var material = new Material(new Texture("wood2.jpg"));
+        var material = new Material(new Texture("silver.jpg"));
         var meshRenderer = new MeshRenderer(mesh, material);
         SceneObject ball = new SceneObject("ball");
         ball.add(meshRenderer);
