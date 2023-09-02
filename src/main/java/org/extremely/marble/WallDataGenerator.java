@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -32,6 +33,9 @@ public class WallDataGenerator {
     }
 
     private List<WallData> loadWalls(String fileName) {
+        if (!fileName.contains("wall1")) {
+            return Collections.emptyList();
+        }
         var loader = new ObjLoader();
 //        var meshData = loader.load("./res/models/wall1.obj");
         var meshData = loader.load(fileName);

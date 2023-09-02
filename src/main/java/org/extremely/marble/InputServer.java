@@ -68,6 +68,7 @@ public class InputServer {
             try {
                 while (running) {
                     var text = reader.nextLine();
+                    System.out.println("GOT - " + text);
                     var values = text.split(",");
 
                     var inVec = new Vector3f(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2])).normalize();
