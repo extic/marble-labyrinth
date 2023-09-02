@@ -70,7 +70,7 @@ public class WallDataGenerator {
                     } else if (triangle.normal.z == -1f) {
                         direction = WallDirection.NORTH;
                     } else {
-                        throw new RuntimeException("Could not determine wall direction - " + triangle.normal);
+                        throw new RuntimeException("Could not determine wall direction - " + triangle.normal + ", file=" + fileName);
                     }
 
                     if (direction == WallDirection.EAST || direction == WallDirection.WEST) {
