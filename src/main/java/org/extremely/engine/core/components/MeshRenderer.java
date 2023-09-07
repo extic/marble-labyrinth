@@ -18,7 +18,7 @@ public class MeshRenderer extends SceneComponent {
     @Override
     public void render(Shader shader, RenderingEngine renderingEngine) {
         shader.bind();
-        shader.updateUniforms(getTransform().getWorldMatrix(), material, renderingEngine);
+        shader.updateUniforms(getTransform().getTransformMatrix(), material, renderingEngine);
 //        shader.updateUniforms(material, renderingEngine);
         mesh.draw();
     }

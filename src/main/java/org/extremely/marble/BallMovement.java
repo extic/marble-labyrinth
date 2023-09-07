@@ -2,6 +2,7 @@ package org.extremely.marble;
 
 import org.extremely.engine.core.SceneComponent;
 import org.extremely.engine.core.SceneObject;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -20,10 +21,10 @@ public class BallMovement extends SceneComponent {
         wallCollisionDetector = new WallCollisionDetector();
     }
 
+    float test = 0f;
     @Override
     public void update(float frameTime) {
-//        if(1==1) return;
-        var boardMatrix = board.getTransform().getLocalMatrix();
+        var boardMatrix = board.getTransform().getTransformMatrix();
         var boardNormal = new Vector4f(0, 1, 0, 0).mul(boardMatrix);
         var upVector = new Vector3f(0, 1, 0);
         var boardTangent = upVector.cross(boardNormal.x, boardNormal.y, boardNormal.z);
@@ -34,24 +35,31 @@ public class BallMovement extends SceneComponent {
             acceleration.y = 0;
         }
 
-
         velocity.add(acceleration);
 
-        var beforeTranslation = new Vector3f();
-        getTransform().getLocalMatrix().getTranslation(beforeTranslation);
-
+        var beforeTranslation = getTransform().getPos();
         var afterTranslation = new Vector3f();
         beforeTranslation.add(velocity, afterTranslation);
+        wallCollisionDetector.detect(beforeTranslation, afterTranslation, velocity, 0.25f);
+        getTransform().setPos(afterTranslation);
 
-        boolean detected = wallCollisionDetector.detect(beforeTranslation, afterTranslation, velocity, 0.25f);
-        if (detected) {
-//            System.out.println("hit");
-//                beforeTranslation.add(velocity, afterTranslation);
+        var rotationVector = new Vector3f();
+
+        var temp = new Vector3f();
+        afterTranslation.sub(beforeTranslation, temp);
+        var length = temp.length();
+        if (length != 0f) {
+            temp.cross(new Vector3f(0, -1f, 0), rotationVector);
+            getTransform().setRot(new Quaternionf().rotateAxis(test, rotationVector));
+//        var distance = beforeTranslation.distance(afterTranslation);
+            test += length * 5f;
+//        if (test > 2f * Math.PI) {
+//            test -= (float) (2f * Math.PI);
+//        }
         }
 
-        getTransform().getLocalMatrix().setTranslation(afterTranslation);
 
-//        getTransform().getLocalMatrix().translate(velocity);
-        getTransform().setChanged(true);
+
+        getTransform().setModified(true);
     }
 }

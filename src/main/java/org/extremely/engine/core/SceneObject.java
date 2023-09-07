@@ -50,8 +50,8 @@ public class SceneObject {
 
     public void update(float frameTime) {
         boolean updated = false;
-        if (transform.isChanged()) {
-            transform.update(parent.transform.getWorldMatrix());
+        if (transform.isModified()) {
+            transform.update(parent.transform.getTransformMatrix());
             updated = true;
         }
 
@@ -61,7 +61,7 @@ public class SceneObject {
 
         for (SceneObject child : children) {
             if (updated) {
-                child.transform.setChanged(true);
+                child.transform.setModified(true);
             }
             child.update(frameTime);
         }

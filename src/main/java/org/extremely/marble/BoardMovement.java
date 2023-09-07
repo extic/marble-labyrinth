@@ -1,6 +1,7 @@
 package org.extremely.marble;
 
 import org.extremely.engine.core.SceneComponent;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class BoardMovement extends SceneComponent {
@@ -13,7 +14,7 @@ public class BoardMovement extends SceneComponent {
     @Override
     public void input() {
         var transform = getTransform();
-        transform.getLocalMatrix().identity().rotateXYZ(input.x, input.y, input.z);
-        transform.setChanged(true);
+        transform.setRot(new Quaternionf().rotateXYZ(input.x, input.y, input.z));
+        transform.setModified(true);
     }
 }
