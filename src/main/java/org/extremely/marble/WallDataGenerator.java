@@ -22,11 +22,7 @@ public class WallDataGenerator {
                 .flatMap(fileName -> loadWalls("./res/models/" + fileName).stream())
                 .toList();
 
-        var walls = new ArrayList<WallData>();
-        walls.add(new WallData(new Vector3f(-5.12f, 0, -5.12f), new Vector3f(5.12f, 0, -5.12f), WallDirection.SOUTH));
-        walls.add(new WallData(new Vector3f(5.12f, 0, -5.12f), new Vector3f(5.12f, 0, 5.12f), WallDirection.WEST));
-        walls.add(new WallData(new Vector3f(-5.12f, 0, 5.12f), new Vector3f(5.12f, 0, 5.12f), WallDirection.NORTH));
-        walls.add(new WallData(new Vector3f(-5.12f, 0, -5.12f), new Vector3f(-5.12f, 0, 5.12f), WallDirection.EAST));
+        var walls = getPerimeterWalls();
         walls.addAll(innerWalls);
 
         var gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -39,9 +35,21 @@ public class WallDataGenerator {
         }
     }
 
+    private static ArrayList<WallData> getPerimeterWalls() {
+        var walls = new ArrayList<WallData>();
+        walls.add(new WallData("perimeter", new Vector3f(-5.12f, 0, -5.12f), new Vector3f(5.12f, 0, -5.12f), WallDirection.SOUTH));
+        walls.add(new WallData("perimeter", new Vector3f(5.12f, 0, -5.12f), new Vector3f(5.12f, 0, 5.12f), WallDirection.WEST));
+        walls.add(new WallData("perimeter", new Vector3f(-5.12f, 0, 5.12f), new Vector3f(5.12f, 0, 5.12f), WallDirection.NORTH));
+        walls.add(new WallData("perimeter", new Vector3f(-5.12f, 0, -5.12f), new Vector3f(-5.12f, 0, 5.12f), WallDirection.EAST));
+        return walls;
+    }
+
     private List<WallData> loadWalls(String fileName) {
         var loader = new ObjLoader();
         var meshData = loader.load(fileName);
+
+        var fileNameOnly = new File(fileName).getName();
+        var wallName = fileNameOnly.substring(0, fileNameOnly.length() - 4);
 
         var triangleVertexIndices = partition(Arrays.stream(meshData.indicesArray()).boxed().toList(), 3);
 
@@ -89,7 +97,7 @@ public class WallDataGenerator {
                         }
                     }
 
-                    return new WallData(vertex1, vertex2, direction);
+                    return new WallData(wallName, vertex1, vertex2, direction);
                 })
                 .toList();
     }
@@ -119,6 +127,7 @@ public class WallDataGenerator {
     ) {}
 
     private record WallData(
+            String name,
             Vector3f vertex1,
             Vector3f vertex2,
             WallDirection direction

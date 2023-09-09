@@ -8,7 +8,9 @@ import java.io.FileReader;
 import java.util.List;
 
 public class WallCollisionDetector {
-    private static final float WALL_DAMPENING_FACTOR = 0.2f;
+    private static final float WALL_DAMPENING_FACTOR = 0.0f;
+    private static final float WALL_ROUNDING_CONSTANT = 0.000002f;
+
     private final List<Wall> walls;
 
     public WallCollisionDetector() {
@@ -28,7 +30,7 @@ public class WallCollisionDetector {
                     continue;
                 }
                 if (before.x - wall.vertex1.x >= radius && after.x - wall.vertex1.x <= radius) {
-                    after.x = wall.vertex1.x + radius;
+                    after.x = wall.vertex1.x + radius + WALL_ROUNDING_CONSTANT;
                     velocity.x = -velocity.x * WALL_DAMPENING_FACTOR;
                     detected = true;
                 }
@@ -40,7 +42,7 @@ public class WallCollisionDetector {
                 }
 
                 if (wall.vertex1.x - before.x >= radius && wall.vertex1.x - after.x <= radius) {
-                    after.x = wall.vertex1.x - radius;
+                    after.x = wall.vertex1.x - radius - WALL_ROUNDING_CONSTANT;
                     velocity.x = -velocity.x * WALL_DAMPENING_FACTOR;
                     detected = true;
                 }
@@ -51,7 +53,7 @@ public class WallCollisionDetector {
                     continue;
                 }
                 if (wall.vertex1.z - before.z >= radius && wall.vertex1.z - after.z <= radius) {
-                    after.z = wall.vertex1.z - radius;
+                    after.z = wall.vertex1.z - radius - WALL_ROUNDING_CONSTANT;
                     velocity.z = -velocity.z * WALL_DAMPENING_FACTOR;
                     detected = true;
                 }
@@ -62,7 +64,7 @@ public class WallCollisionDetector {
                     continue;
                 }
                 if (before.z - wall.vertex1.z >= radius && after.z - wall.vertex1.z <= radius) {
-                    after.z = wall.vertex1.z + radius;
+                    after.z = wall.vertex1.z + radius + WALL_ROUNDING_CONSTANT;
                     velocity.z = -velocity.z * WALL_DAMPENING_FACTOR;
                     detected = true;
                 }

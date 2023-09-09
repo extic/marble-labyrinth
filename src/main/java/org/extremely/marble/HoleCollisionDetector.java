@@ -27,8 +27,9 @@ public class HoleCollisionDetector {
     }
 
     public Vector3f detect(Vector3f pos, float radius) {
+        var groundPos = new Vector3f(pos.x, 0, pos.z);
         for (Vector3f hole : holes) {
-            if (pos.distance(hole) < radius) {
+            if (groundPos.distance(hole) < radius) {
                 return hole;
             }
         }
