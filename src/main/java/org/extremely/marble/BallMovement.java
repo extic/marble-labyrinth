@@ -10,8 +10,11 @@ public class BallMovement extends SceneComponent {
 
     private final SceneObject board;
     private final WallCollisionDetector wallCollisionDetector;
+    private final HoleCollisionDetector holeCollisionDetector;
     private Vector3f acceleration;
     private Vector3f velocity;
+    private boolean falling;
+    private boolean moving;
 
     public BallMovement(SceneObject board) {
         this.board = board;
@@ -19,11 +22,30 @@ public class BallMovement extends SceneComponent {
         this.velocity = new Vector3f(0.01f, 0, 0.005f);
 
         wallCollisionDetector = new WallCollisionDetector();
+        holeCollisionDetector = new HoleCollisionDetector();
+        falling = false;
+        moving = true;
     }
 
     float test = 0f;
     @Override
     public void update(float frameTime) {
+        if (!moving) {
+            return;
+        }
+
+        if (falling) {
+            velocity.add(new Vector3f(0f, -0.01f, 0f));
+            getTransform().getPos().add(velocity);
+            getTransform().setModified(true);
+
+            if (getTransform().getPos().y < -1f) {
+                moving = false;
+            }
+            return;
+        }
+
+
         var boardMatrix = board.getTransform().getTransformMatrix();
         var boardNormal = new Vector4f(0, 1, 0, 0).mul(boardMatrix);
         var upVector = new Vector3f(0, 1, 0);
@@ -56,6 +78,15 @@ public class BallMovement extends SceneComponent {
 //        if (test > 2f * Math.PI) {
 //            test -= (float) (2f * Math.PI);
 //        }
+        }
+
+        var pos = getTransform().getPos();
+        Vector3f hole = holeCollisionDetector.detect(pos, 0.3f);
+        if (hole != null) {
+            falling = true;
+            hole.sub(pos, velocity);
+            velocity.y = 0;
+            velocity.div(10f);
         }
 
 

@@ -117,7 +117,7 @@ public class MarbleGame implements Game {
         var meshRenderer = new MeshRenderer(mesh, material);
         SceneObject ball = new SceneObject("ball");
         ball.add(meshRenderer);
-        ball.getTransform().setPos(new Vector3f(0, 0.25f, 0));
+        ball.getTransform().setPos(new Vector3f(1.36f, 0.25f, -4.56f));
         ball.getTransform().setModified(true);
         ball.add(new BallMovement(board));
         return ball;
