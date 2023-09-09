@@ -27,7 +27,7 @@ public class InputServer {
         }
     }
 
-    public void run(Consumer<Vector3f> consumer) {
+    public void run(Consumer<ServerInput> consumer) {
         try {
             connect("COM6", consumer);
         } catch (Exception e) {
@@ -35,7 +35,7 @@ public class InputServer {
         }
     }
 
-    void connect(String portName, final Consumer<Vector3f> consumer) throws Exception {
+    void connect(String portName, final Consumer<ServerInput> consumer) throws Exception {
         System.setProperty("os.name", "Windows 10");
 
         DriverManager.getInstance().loadDrivers();
@@ -90,10 +90,10 @@ public class InputServer {
         }
     }
 
-    private void process(String text, Consumer<Vector3f> consumer) {
+    private void process(String text, Consumer<ServerInput> consumer) {
 //        System.out.println(text);
 //
-        var values = text.split(",");
+        var values = text.trim().split(",");
         try {
             var inVec = new Vector3f(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2])).normalize();
 
@@ -113,9 +113,11 @@ public class InputServer {
             var pitch = Math.atan2((-reduced.x), Math.sqrt(reduced.y * reduced.y + reduced.z * reduced.z)) * 57.3f;
             var yaw = 0f;
 
-            consumer.accept(new Vector3f(roll, pitch, yaw));
+            consumer.accept(new ServerInput(new Vector3f(roll, pitch, yaw), values[4].equals("1")));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+
+    public record ServerInput(Vector3f vector, boolean button1Pressed) {}
 }

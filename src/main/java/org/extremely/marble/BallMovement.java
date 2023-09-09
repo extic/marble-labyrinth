@@ -15,16 +15,38 @@ public class BallMovement extends SceneComponent {
     private Vector3f velocity;
     private boolean falling;
     private boolean moving;
+    private boolean buttonPressed;
 
     public BallMovement(SceneObject board) {
         this.board = board;
-        this.acceleration = new Vector3f(0, 0, 0);
-        this.velocity = new Vector3f(0.01f, 0, 0.005f);
 
         wallCollisionDetector = new WallCollisionDetector();
         holeCollisionDetector = new HoleCollisionDetector();
+        buttonPressed = false;
+
+        reset();
+    }
+
+    private void reset() {
+        this.acceleration = new Vector3f(0, 0, 0);
+        this.velocity = new Vector3f(0.01f, 0, 0.005f);
+
         falling = false;
         moving = true;
+    }
+
+    public void setInput(boolean button) {
+        this.buttonPressed = button;
+    }
+
+    @Override
+    public void input() {
+        if (buttonPressed) {
+            reset();
+
+            getTransform().setPos(new Vector3f(1.36f, 0.25f, -4.56f));
+            getTransform().setModified(true);
+        }
     }
 
     float test = 0f;

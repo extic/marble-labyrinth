@@ -58,9 +58,14 @@ public class MarbleGame implements Game {
 
         var boardInputComponent = new BoardMovement();
         board.add(boardInputComponent);
+
+        var ballInputComponent = new BallMovement(board);
+        ball.add(ballInputComponent);
+
         inputServer = new InputServer();
-        inputServer.run(vector -> {
-            boardInputComponent.setInput(new Vector3f(Math.toRadians(-vector.y), 0, Math.toRadians(-vector.x)));
+        inputServer.run(input -> {
+            boardInputComponent.setInput(new Vector3f(Math.toRadians(-input.vector().y), 0, Math.toRadians(-input.vector().x)));
+            ballInputComponent.setInput(input.button1Pressed());
         });
     }
 
@@ -119,7 +124,6 @@ public class MarbleGame implements Game {
         ball.add(meshRenderer);
         ball.getTransform().setPos(new Vector3f(1.36f, 0.25f, -4.56f));
         ball.getTransform().setModified(true);
-        ball.add(new BallMovement(board));
         return ball;
     }
 
