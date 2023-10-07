@@ -33,7 +33,6 @@ import static java.util.Objects.requireNonNull;
 
 public class MarbleGame implements Game {
     private InputServer inputServer;
-    private float counter;
 
     @Override
     public EngineSettings getSettings() {
@@ -77,11 +76,6 @@ public class MarbleGame implements Game {
     @Override
     public void update(float frameTime) {
         Engine.getInstance().getSceneGraph().getRoot().update(frameTime);
-//        counter += 0.2f;
-//        var rotate = new Matrix4f().rotate(0.001f, new Vector3f(0, 1, 0));
-//        var rotate1 = new Matrix4f().rotate((float)(Math.sin(counter)) / 20f, new Vector3f(0, 0, 1));
-//        var rotate2 = new Matrix4f().rotate((float)(Math.sin(counter / 1.5f)) / 20f, new Vector3f(1, 0, 0));
-//        board.getTransform().mul(rotate).mul(rotate1).mul(rotate2);
     }
 
     @Override

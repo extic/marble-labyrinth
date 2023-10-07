@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.util.List;
 
 public class WallCollisionDetector {
-    private static final float WALL_DAMPENING_FACTOR = 0.0f;
+    private static final float WALL_DAMPENING_FACTOR = 0.25f;
     private static final float WALL_ROUNDING_CONSTANT = 0.000002f;
 
     private final List<Wall> walls;

@@ -13,6 +13,7 @@ public class BallMovement extends SceneComponent {
     private final HoleCollisionDetector holeCollisionDetector;
     private Vector3f acceleration;
     private Vector3f velocity;
+    private Vector3f spin;
     private boolean falling;
     private boolean moving;
     private boolean buttonPressed;
@@ -25,11 +26,15 @@ public class BallMovement extends SceneComponent {
         buttonPressed = false;
 
         reset();
+
+
+        velocity = new Vector3f(0, 0, 0.005f);
     }
 
     private void reset() {
         this.acceleration = new Vector3f(0, 0, 0);
         this.velocity = new Vector3f(0.01f, 0, 0.005f);
+        this.spin = null;
 
         falling = false;
         moving = true;
@@ -44,12 +49,12 @@ public class BallMovement extends SceneComponent {
         if (buttonPressed) {
             reset();
 
+            getTransform().reset();
             getTransform().setPos(new Vector3f(1.36f, 0.25f, -4.56f));
             getTransform().setModified(true);
         }
     }
 
-    float test = 0f;
     @Override
     public void update(float frameTime) {
         if (!moving) {
@@ -57,17 +62,22 @@ public class BallMovement extends SceneComponent {
         }
 
         if (falling) {
-            velocity.add(new Vector3f(0f, -0.01f, 0f));
-            getTransform().getPos().add(velocity);
-            getTransform().setModified(true);
-
-            if (getTransform().getPos().y < -1f) {
-                moving = false;
-            }
+            handleFalling();
             return;
         }
 
+        updateAcceleration();
 
+        velocity.add(acceleration);
+
+        detectWallCollision();
+        rotateBall();
+        detectFallingToHole();
+
+        getTransform().setModified(true);
+    }
+
+    private void updateAcceleration() {
         var boardMatrix = board.getTransform().getTransformMatrix();
         var boardNormal = new Vector4f(0, 1, 0, 0).mul(boardMatrix);
         var upVector = new Vector3f(0, 1, 0);
@@ -78,30 +88,39 @@ public class BallMovement extends SceneComponent {
             acceleration.zero().add(gradient.mul(-gradient.y).mul(0.02f));
             acceleration.y = 0;
         }
+    }
 
-        velocity.add(acceleration);
+    private void rotateBall() {
+        var distance = velocity.length();
+        if (distance == 0) {
+            return;
+        }
+        var rotationAngle = distance / 0.25f;
 
+        var newSpin = new Vector3f();
+        var normalizedVelocity = new Vector3f();
+        velocity.normalize(normalizedVelocity);
+        new Vector3f(0, 1, 0).cross(normalizedVelocity, newSpin);
+        newSpin.normalize();
+
+        if (spin != null) {
+            var orig = getTransform().getRot();
+            var quaternion = new Quaternionf().identity().rotateAxis(rotationAngle, newSpin);
+            quaternion.mul(orig);
+            getTransform().setRot(quaternion);
+        }
+        spin = newSpin;
+    }
+
+    private void detectWallCollision() {
         var beforeTranslation = getTransform().getPos();
         var afterTranslation = new Vector3f();
         beforeTranslation.add(velocity, afterTranslation);
         wallCollisionDetector.detect(beforeTranslation, afterTranslation, velocity, 0.25f);
         getTransform().setPos(afterTranslation);
+    }
 
-        var rotationVector = new Vector3f();
-
-        var temp = new Vector3f();
-        afterTranslation.sub(beforeTranslation, temp);
-        var length = temp.length();
-        if (length != 0f) {
-            temp.cross(new Vector3f(0, -1f, 0), rotationVector);
-            getTransform().setRot(new Quaternionf().rotateAxis(test, rotationVector));
-//        var distance = beforeTranslation.distance(afterTranslation);
-            test += length * 5f;
-//        if (test > 2f * Math.PI) {
-//            test -= (float) (2f * Math.PI);
-//        }
-        }
-
+    private void detectFallingToHole() {
         var pos = getTransform().getPos();
         Vector3f hole = holeCollisionDetector.detect(pos, 0.3f);
         if (hole != null) {
@@ -110,9 +129,15 @@ public class BallMovement extends SceneComponent {
             velocity.y = 0;
             velocity.div(10f);
         }
+    }
 
-
-
+    private void handleFalling() {
+        velocity.add(new Vector3f(0f, -0.01f, 0f));
+        getTransform().getPos().add(velocity);
         getTransform().setModified(true);
+
+        if (getTransform().getPos().y < -1f) {
+            moving = false;
+        }
     }
 }

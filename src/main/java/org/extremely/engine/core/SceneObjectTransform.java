@@ -12,6 +12,10 @@ public class SceneObjectTransform {
     private boolean modified;
 
     public SceneObjectTransform() {
+        reset();
+    }
+
+    public void reset() {
         pos = new Vector3f(0, 0, 0);
         rot = new Quaternionf(0, 0, 0, 1);
         scale = new Vector3f(1, 1, 1);
